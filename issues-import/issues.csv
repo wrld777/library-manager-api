@@ -1,0 +1,68 @@
+"Title","Body","Labels"
+"Setup solution e struttura progetti","Crea la solution con i tre progetti: LibraryManager.WebApi, LibraryManager.ApplicationCore, LibraryManager.Infrastructure, piu LibraryManager.Tests. Imposta i riferimenti in modo che WebApi dipenda da ApplicationCore e Infrastructure, ApplicationCore non dipenda da nessuno degli altri due (e il cuore pulito), Infrastructure dipenda solo da ApplicationCore (per le interfacce).
+
+**Acceptance criteria:**
+- La solution compila
+- ApplicationCore non ha riferimenti a Infrastructure ne a WebApi","setup"
+"Definire le entita di dominio","Crea Book (Titolo, Autore, ISBN, CopieDisponibili), Member (Nome, Email), Loan (BookId, MemberId, DataPrestito, DataRestituzione nullable) dentro ApplicationCore, come POCO senza dipendenze EF.
+
+**Acceptance criteria:**
+- Le entita sono in ApplicationCore/Entities
+- Nessun attributo EF Core dentro (le configurazioni vanno in Infrastructure)","setup"
+"Configurare DbContext ed EF Core","In Infrastructure, crea LibraryDbContext con DbSet<Book>, DbSet<Member>, DbSet<Loan>, e le IEntityTypeConfiguration<T> separate per ogni entita (niente Fluent API tutta dentro OnModelCreating).
+
+**Acceptance criteria:**
+- `dotnet ef migrations add InitialCreate` genera la migration senza errori
+- Le configurazioni sono in file separati per entita","setup"
+"Prima migration e database locale","Applica la migration su SQL Server (o SQLite) locale, verifica che le tabelle vengano create correttamente con le relazioni (FK Loan->Book, Loan->Member).
+
+**Acceptance criteria:**
+- `dotnet ef database update` funziona
+- Le FK sono visibili nello schema","setup"
+"Installare e configurare MediatR","Aggiungi il pacchetto MediatR ad ApplicationCore, registra gli assembly in Program.cs (WebApi). Crea la cartella Features/ con sottocartelle Books/ e Loans/.
+
+**Acceptance criteria:**
+- IMediator e iniettabile nei controller
+- Un handler 'ping' di prova funziona end-to-end","architecture"
+"Command CreateBook + Handler + Validator","Crea CreateBookCommand (Titolo, Autore, ISBN, CopieDisponibili), il relativo Handler che salva l'entita tramite repository, e un CreateBookCommandValidator con FluentValidation (Titolo obbligatorio, ISBN formato valido, CopieDisponibili >= 0).
+
+**Acceptance criteria:**
+- Una richiesta valida crea il libro
+- Una richiesta con ISBN malformato viene rifiutata dal validator prima di arrivare all'handler","feature"
+"Pipeline behavior di validazione automatica","Crea un ValidationBehavior<TRequest,TResponse> di MediatR che esegue automaticamente tutti i validator registrati prima dell'handler, cosi i controller non controllano mai ModelState a mano.
+
+**Acceptance criteria:**
+- Rimuovendo il controllo manuale di validazione dai controller, la validazione continua a funzionare per ogni Command che ha un Validator associato","architecture"
+"Definire il Result Pattern","Crea Result e Result<T> in ApplicationCore/Common, con stati Success/Failure ed errori tipizzati (es. Error con Code + Message, magari con categorie: NotFound, Validation, Conflict).
+
+**Acceptance criteria:**
+- Nessun metodo del dominio lancia eccezioni per casi di business previsti
+- Esiste un modo standard per mappare Result -> status code HTTP nel controller","architecture"
+"Query GetBookById e GetAllBooks paginata","Crea le due Query con relativi Handler. GetAllBooks riusa il pattern di paginazione logica (PagedList<T>/PagedResult<T>) che hai gia usato in AltenStock.
+
+**Acceptance criteria:**
+- GetBookById su ID inesistente ritorna un Result.Failure con errore NotFound, non un'eccezione
+- GetAllBooks supporta parametri di paginazione (page, pageSize)","feature"
+"Feature prestiti: BorrowBook","Command BorrowBookCommand (BookId, MemberId): verifica che ci siano copie disponibili, decrementa CopieDisponibili, crea il record Loan con DataPrestito = oggi.
+
+**Acceptance criteria:**
+- Se CopieDisponibili == 0, ritorna Result.Failure (Conflict), nessun prestito viene creato
+- In caso di successo, il conteggio copie e aggiornato correttamente","feature"
+"Feature prestiti: ReturnBook","Command ReturnBookCommand (LoanId): imposta DataRestituzione = oggi sul prestito, incrementa CopieDisponibili sul libro collegato.
+
+**Acceptance criteria:**
+- Restituire un prestito gia chiuso ritorna un errore (non permette doppia restituzione)
+- Il conteggio copie torna corretto","feature"
+"Controller sottili","Crea BooksController e LoansController: ogni azione fa solo _mediator.Send(command/query) e mappa il Result in risposta HTTP (200/201/400/404/409), niente logica dentro il controller.
+
+**Acceptance criteria:**
+- Nessuna azione supera le ~15 righe
+- Nessun controller accede direttamente a DbContext o repository","cleanup"
+"Test unitari sugli handler principali","Test con NSubstitute per almeno CreateBookCommandHandler, BorrowBookCommandHandler, GetBookByIdQueryHandler - mockando repository/DbContext, verificando sia il caso di successo che quello di fallimento.
+
+**Acceptance criteria:**
+- Ogni handler critico ha almeno un test success + un test failure","testing"
+"README con schema architetturale","Scrivi il README: descrizione progetto, stack, comandi per avviare in locale (dotnet run, connection string di esempio), un breve schema (anche testuale) del flusso Command -> Handler -> Result -> Controller, e il collegamento alla nota Obsidian di riferimento.
+
+**Acceptance criteria:**
+- Una persona che non conosce il progetto riesce ad avviarlo seguendo solo il README","docs"
