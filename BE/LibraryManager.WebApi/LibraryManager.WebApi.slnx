@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="LibraryManager.ApplicationCore/LibraryManager.ApplicationCore.csproj" />
+  <Project Path="Librarymanager.Infrastructure/Librarymanager.Infrastructure.csproj" />
+  <Project Path="LibraryManager.Tests/LibraryManager.Tests.csproj" Id="cc9ba358-77e6-456a-8d18-7a04d3c88115" />
+  <Project Path="LibraryManager/LibraryManager.csproj" />
+</Solution>
