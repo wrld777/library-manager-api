@@ -8,8 +8,15 @@
 
   <ItemGroup>
     <Folder Include="Contracts\" />
+    <Folder Include="Features\Books\Commands\" />
+    <Folder Include="Features\Books\Queries\" />
+    <Folder Include="Features\Loans\" />
     <Folder Include="Services\" />
     <Folder Include="Repositories\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="14.2.0" />
   </ItemGroup>
 
 </Project>
