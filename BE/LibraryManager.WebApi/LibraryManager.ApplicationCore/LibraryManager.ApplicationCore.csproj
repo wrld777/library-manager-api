@@ -8,14 +8,13 @@
 
   <ItemGroup>
     <Folder Include="Contracts\" />
-    <Folder Include="Features\Books\Commands\" />
     <Folder Include="Features\Books\Queries\" />
     <Folder Include="Features\Loans\" />
-    <Folder Include="Services\" />
-    <Folder Include="Repositories\" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="16.2.0" />
+    <PackageReference Include="FluentValidation" Version="12.2.0" />
     <PackageReference Include="MediatR" Version="14.2.0" />
   </ItemGroup>
 

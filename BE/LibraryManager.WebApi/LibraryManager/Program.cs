@@ -1,5 +1,8 @@
 using Librarymanager.Infrastructure.context;
+using Librarymanager.Infrastructure.Repositories;
+using LibraryManager.ApplicationCore.Automapper;
 using LibraryManager.ApplicationCore.Features.Ping;
+using LibraryManager.ApplicationCore.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,6 +19,14 @@ builder.Services.AddMediatR(cfg =>
 
 });
 
+//AutoMapper Service
+
+builder.Services.AddAutoMapper(cfg =>
+{
+    cfg.AddProfile<BookProfile>();
+});
+//Repositories
+builder.Services.AddScoped<IBookRepository, BookRepository>();
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
