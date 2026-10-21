@@ -21,7 +21,11 @@ namespace LibraryManager.Controllers
         public async Task<IActionResult> CreateBookAsync([FromBody] CreateBookCommand command, CancellationToken ct = default)
         {
             var response = await _sender.Send(command, ct);
-            return Ok(response);
+            if(!response.IsSuccess)
+            {
+                return BadRequest(response.Error);
+            };
+            return Ok(response.Value);
         }
 
     }

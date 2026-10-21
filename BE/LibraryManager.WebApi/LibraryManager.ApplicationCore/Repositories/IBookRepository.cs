@@ -8,5 +8,6 @@ namespace LibraryManager.ApplicationCore.Repositories
     public interface IBookRepository
     {
         Task<Book> AddBookAsync(Book book, CancellationToken ct = default);
+        Task<Book?> GetBookByIsbnAsync(string isbn, CancellationToken ct = default);
     }
 }
