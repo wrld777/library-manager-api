@@ -1,8 +1,11 @@
+using FluentValidation;
 using Librarymanager.Infrastructure.context;
 using Librarymanager.Infrastructure.Repositories;
 using LibraryManager.ApplicationCore.Automapper;
+using LibraryManager.ApplicationCore.Common.Behaviors;
 using LibraryManager.ApplicationCore.Features.Ping;
 using LibraryManager.ApplicationCore.Repositories;
+using LibraryManager.ExceptionHandlers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,12 +16,18 @@ builder.Services.AddDbContext<LmDbContext>(options =>
  options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 //MediatR Service
+var assembly = typeof(Validatebehavior<,>).Assembly;
 builder.Services.AddMediatR(cfg =>
 {
     cfg.RegisterServicesFromAssembly(typeof(PingQuery).Assembly);
+    cfg.RegisterServicesFromAssembly(assembly);
+    cfg.AddOpenBehavior(typeof(Validatebehavior<,>));
 
 });
+builder.Services.AddValidatorsFromAssembly(assembly);
 
+builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
+builder.Services.AddProblemDetails();
 //AutoMapper Service
 
 builder.Services.AddAutoMapper(cfg =>
@@ -34,7 +43,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 var app = builder.Build();
-
+app.UseExceptionHandler();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

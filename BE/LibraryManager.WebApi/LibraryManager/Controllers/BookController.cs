@@ -20,12 +20,6 @@ namespace LibraryManager.Controllers
         [HttpPost("Create")]
         public async Task<IActionResult> CreateBookAsync([FromBody] CreateBookCommand command, CancellationToken ct = default)
         {
-            var validator = new CreateBookValidator();
-            var validation = await validator.ValidateAsync(command, ct);
-            if(!validation.IsValid)
-            {
-                return BadRequest(string.Join(",", validation.Errors.Select(error => error.ErrorMessage)));
-            };
             var response = await _sender.Send(command, ct);
             return Ok(response);
         }
