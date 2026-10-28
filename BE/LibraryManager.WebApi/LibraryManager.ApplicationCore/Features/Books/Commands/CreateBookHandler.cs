@@ -2,6 +2,7 @@
 using LibraryManager.ApplicationCore.Dto_s;
 using LibraryManager.ApplicationCore.Models;
 using LibraryManager.ApplicationCore.Repositories;
+using LibraryManager.ApplicationCore.ResultPattern;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Text;
 
 namespace LibraryManager.ApplicationCore.Features.Books.Commands
 {
-    public class CreateBookHandler : IRequestHandler<CreateBookCommand, BookDTO>
+    public class CreateBookHandler : IRequestHandler<CreateBookCommand, Result<BookDTO>>
     {
         private readonly IBookRepository _bookRepository;
         private readonly IMapper _mapper;
@@ -20,11 +21,16 @@ namespace LibraryManager.ApplicationCore.Features.Books.Commands
             _mapper = mapper;
 
         }
-        public async Task<BookDTO> Handle(CreateBookCommand request, CancellationToken cancellationToken)
+        public async Task<Result<BookDTO>> Handle(CreateBookCommand request, CancellationToken cancellationToken)
         {
             var book = _mapper.Map<Book>(request);
+            var ExistingBook = await _bookRepository.GetBookByIsbnAsync(book.ISBN, cancellationToken);
+            if(ExistingBook != null)
+            {
+                return Result<BookDTO>.Failure(Errors.BookAlreadyExists);
+            }
             var createdBook = await _bookRepository.AddBookAsync(book,cancellationToken);
-            return _mapper.Map<BookDTO>(createdBook);
+            return  Result<BookDTO>.Success(_mapper.Map<BookDTO>(createdBook));
 
 
         }

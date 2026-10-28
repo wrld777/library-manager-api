@@ -1,4 +1,5 @@
 ﻿using LibraryManager.ApplicationCore.Dto_s;
+using LibraryManager.ApplicationCore.ResultPattern;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -6,5 +7,5 @@ using System.Text;
 
 namespace LibraryManager.ApplicationCore.Features.Books.Commands
 {
-    public record CreateBookCommand(string Title, string Author, string ISBN, DateTime PublishedDate, int CopiesAvailable) : IRequest<BookDTO>;
+    public record CreateBookCommand(string Title, string Author, string ISBN, DateTime PublishedDate, int CopiesAvailable) : IRequest<Result<BookDTO>>;
 }
