@@ -1,4 +1,5 @@
 ﻿using LibraryManager.ApplicationCore.Features.Books.Commands;
+using LibraryManager.Common;
 using LibraryManager.FluentValidator;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -21,11 +22,8 @@ namespace LibraryManager.Controllers
         public async Task<IActionResult> CreateBookAsync([FromBody] CreateBookCommand command, CancellationToken ct = default)
         {
             var response = await _sender.Send(command, ct);
-            if(!response.IsSuccess)
-            {
-                return BadRequest(response.Error);
-            };
-            return Ok(response.Value);
+
+            return response.ToActionResult(this);
         }
 
     }

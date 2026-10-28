@@ -7,29 +7,12 @@ namespace LibraryManager.ApplicationCore.ResultPattern
     //categoria di errori
     public enum ErrorType
     {
-        OldPasswordMatchingError = 400,
-        PasswordMatchingError = 400,
-        AlreadyVerificated = 409,
-        Validation = 400,
-        InvalidFormat = 422,
-        InvalidOperation = 409,
-        MissingRequiredField = 400,
-        OutOfRange = 400,
-        Unauthorized = 401,
-        Forbidden = 403,
-        TokenExpired = 401,
-        InvalidCredentials = 401,
-        NotFound = 404,
-        AlreadyExists = 409,
-        Conflict = 409,
-        Timeout = 408,
-        ServiceUnavailable = 503,
-        NetworkError = 502,
-        InternalServerError = 500,
-        DatabaseError = 500,
-        ConfigurationError = 500,
-        Unknown = 520,
-        OperationFailed = 424
+        Validation,
+        NotFound,
+        Conflict,
+        Unauthorized,
+        Forbidden,
+        Failure
     }
 
     // creo oggetto error con codice e messaggio
@@ -82,7 +65,7 @@ namespace LibraryManager.ApplicationCore.ResultPattern
         public static Error BookNotFound { get; } = new("BookNotFound", "The book was not found.", ErrorType.NotFound);
 
         ///
-        public static Error BookAlreadyExists { get; } = new("BookAlreadyExists", "The book already exists.", ErrorType.AlreadyExists);
+        public static Error BookAlreadyExists { get; } = new("BookAlreadyExists", "The book already exists.", ErrorType.Forbidden);
 
     }
 }
