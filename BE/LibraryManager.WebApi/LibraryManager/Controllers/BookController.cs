@@ -1,4 +1,5 @@
 ﻿using LibraryManager.ApplicationCore.Features.Books.Commands;
+using LibraryManager.ApplicationCore.Features.Books.Queries;
 using LibraryManager.Common;
 using LibraryManager.FluentValidator;
 using MediatR;
@@ -23,6 +24,13 @@ namespace LibraryManager.Controllers
         {
             var response = await _sender.Send(command, ct);
 
+            return response.ToActionResult(this);
+        }
+
+        [HttpGet("{isbn}")]
+        public async Task<IActionResult> GetBookByIsbnAsync([FromRoute] string isbn, CancellationToken ct)
+        {
+            var response = await _sender.Send(new GetByIsbnQuery(isbn), ct);
             return response.ToActionResult(this);
         }
 

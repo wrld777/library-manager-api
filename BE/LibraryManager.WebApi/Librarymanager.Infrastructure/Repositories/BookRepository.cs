@@ -19,7 +19,7 @@ namespace Librarymanager.Infrastructure.Repositories
 
         public async Task<Book?> GetBookByIsbnAsync(string isbn, CancellationToken ct = default)
         {
-            return await _context.Books.FindAsync(new object[] { isbn }, ct);
+            return await _context.Books.FindAsync(isbn, ct);
         }
 
         public async Task<Book> AddBookAsync(Book book, CancellationToken ct = default)
