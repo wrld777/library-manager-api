@@ -1,6 +1,8 @@
 ﻿using Librarymanager.Infrastructure.context;
+using LibraryManager.ApplicationCore.Generics;
 using LibraryManager.ApplicationCore.Models;
 using LibraryManager.ApplicationCore.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -15,6 +17,19 @@ namespace Librarymanager.Infrastructure.Repositories
         {
             _context = context;
 
+        }
+
+        public async Task<PagedList<Book>> GetAllPaged(int page, int pageSize, CancellationToken ct)
+        {
+            var books = _context.Books.AsNoTracking();
+            var totalCount = await books.CountAsync(ct);
+
+            var pagedBooks = await books
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync(ct);
+
+            return new PagedList<Book>(pagedBooks, page, pageSize, totalCount);
         }
 
         public async Task<Book?> GetBookByIsbnAsync(string isbn, CancellationToken ct = default)

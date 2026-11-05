@@ -66,6 +66,6 @@ namespace LibraryManager.ApplicationCore.ResultPattern
 
         ///
         public static Error BookAlreadyExists { get; } = new("BookAlreadyExists", "The book already exists.", ErrorType.Forbidden);
-
+        public static Error EmptyList { get; } = new("EmptyList", "The list is empty.", ErrorType.Forbidden);
     }
 }

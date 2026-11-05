@@ -34,5 +34,13 @@ namespace LibraryManager.Controllers
             return response.ToActionResult(this);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetAllAsync([FromQuery] GetAllQuery query, CancellationToken ct)
+        {
+            var response = await _sender.Send(query, ct);
+
+            return response.ToActionResult(this);
+        }
+
     }
 }
